@@ -55,8 +55,8 @@ def isoleer_salamander(img):
     box = [[int(nieuwe_w * 0.1), int(nieuwe_h * 0.1), int(nieuwe_w * 0.9), int(nieuwe_h * 0.9)]]
     results = sam_model(img_resized, bboxes=box, verbose=False)
     
-    if len(results) > 0 and results.masks is not None:
-        masker = results.masks.data.cpu().numpy()
+    if len(results) > 0 and results[0].masks is not None:
+        masker = results[0].masks.data[0].cpu().numpy()
         masker = (masker * 255).astype(np.uint8)
         masker = cv2.resize(masker, (nieuwe_w, nieuwe_h))
         return cv2.bitwise_and(img_resized, img_resized, mask=masker)
@@ -116,7 +116,7 @@ if uploaded_file is not None:
                 
                 if aantal > hoogste_aantal_matches:
                     hoogste_aantal_matches = aantal
-                    beste_match_naam = os.path.splitext(bestand)
+                    beste_match_naam = os.path.splitext(bestand)[0]
                     beste_match_foto = m_img
 
     if beste_match_naam and hoogste_aantal_matches >= 20:
@@ -143,7 +143,7 @@ if uploaded_file is not None:
                 st.rerun()
 
 st.divider()
-huidige_db = [os.path.splitext(f) for f in os.listdir(DB_DIR) if f.endswith(".png")]
+huidige_db = [os.path.splitext(f)[0] for f in os.listdir(DB_DIR) if f.endswith(".png")]
 st.subheader(f"☁️ Gedeelde Populatie Database ({len(huidige_db)} individuen)")
 if len(huidige_db) > 0:
     st.write(", ".join(huidige_db))
