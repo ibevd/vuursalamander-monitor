@@ -90,7 +90,14 @@ def vergelijk_patronen(sal_nieuw, sal_db):
     return len(goede_matches), match_img
 
 # --- WEB INTERFACE ---
-uploaded_file = st.file_uploader("Fotografeer of kies een salamander...", type=["png", "jpg", "jpeg"])
+if "uploader_key" not in st.session_state:
+    st.session_state.uploader_key = 0
+uploaded_file = st.file_uploader(
+    "Fotografeer of kies een salamander...", 
+    type=["png", "jpg", "jpeg"],
+    key=f"uploader_{st.session_state.uploader_key}"
+)
+
 
 if uploaded_file is not None:
     file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
@@ -140,6 +147,7 @@ if uploaded_file is not None:
                     with open(opslaan_pad, "rb") as f:
                         repo.create_file(f"{DB_DIR}/{bestandsnaam}", f"Nieuwe salamander: {veilige_naam}", f.read())
                 st.success(f"**{veilige_naam}** opgeslagen in de gedeelde cloud-database!")
+                st.session_state.uploader_key += 1 
                 st.rerun()
 
 st.divider()
