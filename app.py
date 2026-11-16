@@ -4,6 +4,7 @@ import streamlit as st
 from ultralytics import SAM
 from github import Github
 import os
+import gc
 
 st.set_page_config(layout="centered")
 st.title("🦎 Vuursalamander AI Monitor")
@@ -157,3 +158,5 @@ if len(huidige_db) > 0:
     st.write(", ".join(huidige_db))
 else:
     st.write("Nog geen salamanders in de cloud.")
+
+gc.collect()
